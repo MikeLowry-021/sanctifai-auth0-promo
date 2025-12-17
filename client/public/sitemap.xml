@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>%VITE_BASE_URL%</loc></url>
+  <url><loc>%VITE_BASE_URL%results</loc></url>
+  <url><loc>%VITE_BASE_URL%library</loc></url>
+  <url><loc>%VITE_BASE_URL%community</loc></url>
+  <url><loc>%VITE_BASE_URL%about</loc></url>
+</urlset>

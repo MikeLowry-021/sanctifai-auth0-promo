@@ -1,0 +1,28 @@
+{
+  "name": "SanctifAi — Discern What You Watch",
+  "short_name": "SanctifAi",
+  "description": "Christian AI-powered discernment for movies, shows, games, apps, and books.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#8CAEC6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/logo-icon.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

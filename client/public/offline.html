@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - SanctifAi</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .container {
+      text-align: center;
+      max-width: 500px;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 2rem;
+      background: #8CAEC6;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 40px rgba(140, 174, 198, 0.3);
+    }
+    .logo svg {
+      width: 48px;
+      height: 48px;
+      color: #0f172a;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #8CAEC6;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.125rem;
+      color: #94a3b8;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    .btn {
+      display: inline-block;
+      background: #8CAEC6;
+      color: #0f172a;
+      padding: 0.875rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(140, 174, 198, 0.2);
+    }
+    .btn:hover {
+      background: #a0bfcf;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(140, 174, 198, 0.4);
+    }
+    .status {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: rgba(140, 174, 198, 0.1);
+      border: 1px solid rgba(140, 174, 198, 0.2);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+    <h1>You're Offline</h1>
+    <p>It looks like you've lost your internet connection. Don't worry, your faith journey continues when you're back online.</p>
+    <a href="/" class="btn">Return Home</a>
+    <div class="status">
+      🛡️ SanctifAi - Powered by FAiTH
+    </div>
+  </div>
+</body>
+</html>

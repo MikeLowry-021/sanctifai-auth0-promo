@@ -1,0 +1,187 @@
+import { config } from "./config";
+
+export interface TMDBSearchResult {
+  id: number;
+  title?: string;
+  name?: string;
+  poster_path: string | null;
+  release_date?: string;
+  first_air_date?: string;
+  overview: string;
+  vote_average: number;
+  vote_count?: number;
+  popularity?: number;
+  adult?: boolean;
+  media_type: "movie" | "tv";
+}
+
+export interface TMDBFormattedResult {
+  tmdbId: number;
+  title: string;
+  posterUrl: string | null;
+  releaseYear: string | null;
+  overview: string;
+  rating: number;
+  voteCount: number;
+  popularity: number;
+  mediaType: "movie" | "show";
+}
+
+const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
+
+/**
+ * Helper to get the TMDB key and log its presence.
+ * Returns null when API key is not available.
+ */
+function getTMDBApiKey(): string | null {
+  return config.tmdbApiKey;
+}
+
+/**
+ * Search TMDB for a title. We always hit the multi-search endpoint and then
+ * map "movie" / "tv" to our internal "movie" / "show".
+ */
+export async function searchTMDB(
+  query: string,
+  mediaType: "movie" | "show" = "movie"
+): Promise<TMDBFormattedResult[]> {
+  const apiKey = getTMDBApiKey();
+
+  if (!apiKey) {
+    console.error("[TMDB] No TMDB_API_KEY configured – returning empty results");
+    return [];
+  }
+
+  try {
+    const endpoint = `${TMDB_BASE_URL}/search/multi`;
+    // Add include_adult=false to filter out adult content
+    const url = `${endpoint}?query=${encodeURIComponent(query)}&include_adult=false`;
+
+    const response = await fetch(url, {
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `TMDB search failed with status ${response.status}: ${response.statusText}`
+      );
+    }
+
+    const data = (await response.json()) as { results: TMDBSearchResult[] };
+
+    const formatted: TMDBFormattedResult[] = (data.results ?? [])
+      // Filter: Only keep movies and TV shows
+      .filter(
+        (result) => result.media_type === "movie" || result.media_type === "tv"
+      )
+      // Filter: Explicitly exclude adult content (belt-and-suspenders with API param)
+      .filter((result) => !result.adult)
+      // Map to our format
+      .map((result) => {
+        const title = result.title || result.name || "Unknown Title";
+        const releaseYear =
+          result.release_date?.split("-")[0] ??
+          result.first_air_date?.split("-")[0] ??
+          null;
+
+        const ourMediaType: "movie" | "show" =
+          result.media_type === "tv" ? "show" : "movie";
+
+        return {
+          tmdbId: result.id,
+          title,
+          posterUrl: result.poster_path
+            ? `${TMDB_IMAGE_BASE_URL}${result.poster_path}`
+            : null,
+          releaseYear,
+          overview: result.overview || "",
+          rating: result.vote_average || 0,
+          voteCount: result.vote_count || 0,
+          popularity: result.popularity || 0,
+          mediaType: ourMediaType,
+        };
+      })
+      // Sort: Prioritize by popularity and vote count for relevance
+      .sort((a, b) => {
+        // Primary sort: popularity (descending)
+        const popularityDiff = b.popularity - a.popularity;
+        if (Math.abs(popularityDiff) > 10) {
+          return popularityDiff;
+        }
+        // Secondary sort: vote count (descending) for ties
+        return b.voteCount - a.voteCount;
+      })
+      // Limit: Return only top 3-4 most relevant results
+      .slice(0, 4);
+
+    return formatted;
+  } catch (error) {
+    console.error("[TMDB] Error searching TMDB:", error);
+    return [];
+  }
+}
+
+/**
+ * Fetch detailed information for a single TMDB entry.
+ */
+export async function getTMDBDetails(
+  tmdbId: number,
+  mediaType: "movie" | "show" = "movie"
+): Promise<TMDBFormattedResult | null> {
+  const apiKey = getTMDBApiKey();
+
+  if (!apiKey) {
+    console.error("[TMDB] No TMDB_API_KEY configured – returning null");
+    return null;
+  }
+
+  try {
+    const endpoint =
+      mediaType === "show"
+        ? `${TMDB_BASE_URL}/tv/${tmdbId}`
+        : `${TMDB_BASE_URL}/movie/${tmdbId}`;
+
+    const response = await fetch(endpoint, {
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error(
+        `[TMDB] getTMDBDetails failed with status ${response.status}: ${response.statusText}`
+      );
+      return null;
+    }
+
+    const result = (await response.json()) as TMDBSearchResult;
+
+    const title = result.title || result.name || "Unknown Title";
+    const releaseYear =
+      result.release_date?.split("-")[0] ??
+      result.first_air_date?.split("-")[0] ??
+      null;
+
+    return {
+      tmdbId: result.id,
+      title,
+      posterUrl: result.poster_path
+        ? `${TMDB_IMAGE_BASE_URL}${result.poster_path}`
+        : null,
+      releaseYear,
+      overview: result.overview || "",
+      rating: result.vote_average || 0,
+      voteCount: result.vote_count || 0,
+      popularity: result.popularity || 0,
+      mediaType,
+    };
+  } catch (error) {
+    console.error("[TMDB] Error fetching TMDB details:", error);
+    return null;
+  }
+}

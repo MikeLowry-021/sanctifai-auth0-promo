@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+npm-debug.log*
+
+# Build artifacts
+dist/
+build/
+.vite/
+.next/
+out/
+
+# OS/editor cruft
+.DS_Store
+*.swp
+*.swo
+
+# Replit & tooling
+.replit_history/
+.replit_db*
+.upm/
+*.zip
+*.tar.gz
+
+# Env & secrets (never commit)
+.env
+.env.*
+!.env.example
+*.local
+firebase-service-account*.json
+serviceAccount*.json
+
+# Logs & caches
+logs/
+*.log
+.cache/
+.tmp/
+
+# Misc
+server/public/
+vite.config.ts.*
